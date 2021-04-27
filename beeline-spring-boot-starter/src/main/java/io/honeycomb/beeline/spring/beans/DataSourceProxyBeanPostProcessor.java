@@ -2,16 +2,20 @@ package io.honeycomb.beeline.spring.beans;
 
 import net.ttddyy.dsproxy.support.ProxyDataSource;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
 import javax.sql.DataSource;
 
-public class DataSourceProxyBeanPostProcessor implements BeanPostProcessor {
+public class DataSourceProxyBeanPostProcessor implements BeanFactoryAware, BeanPostProcessor {
 
-    private final BeelineQueryListenerForJDBC listener;
+    private BeanFactory beanFactory;
 
-    public DataSourceProxyBeanPostProcessor(BeelineQueryListenerForJDBC listener) {
-        this.listener = listener;
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
     }
 
     @Override
@@ -22,7 +26,7 @@ public class DataSourceProxyBeanPostProcessor implements BeanPostProcessor {
 
         return ProxyDataSourceBuilder.create((DataSource) bean)
             .name(beanName)
-            .listener(listener)
+            .listener(beanFactory.getBean(BeelineQueryListenerForJDBC.class))
             .build();
     }
 

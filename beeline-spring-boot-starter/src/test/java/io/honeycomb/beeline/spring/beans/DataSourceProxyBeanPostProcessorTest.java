@@ -5,11 +5,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.StaticListableBeanFactory;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +30,12 @@ public class DataSourceProxyBeanPostProcessorTest {
 
     @Before
     public void setUp() {
-        processor = new DataSourceProxyBeanPostProcessor(listener);
+        processor = new DataSourceProxyBeanPostProcessor();
+
+        BeanFactory beanFactory = new StaticListableBeanFactory(
+            Collections.singletonMap("beelineQueryListenerForJDBC", listener));
+
+        processor.setBeanFactory(beanFactory);
     }
 
     @Test
