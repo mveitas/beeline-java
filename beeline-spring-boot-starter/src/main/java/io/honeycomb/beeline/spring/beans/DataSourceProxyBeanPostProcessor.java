@@ -24,10 +24,14 @@ public class DataSourceProxyBeanPostProcessor implements BeanFactoryAware, BeanP
             return bean;
         }
 
-        return ProxyDataSourceBuilder.create((DataSource) bean)
-            .name(beanName)
-            .listener(beanFactory.getBean(BeelineQueryListenerForJDBC.class))
-            .build();
+        if (beanFactory != null) {
+            return ProxyDataSourceBuilder.create((DataSource) bean)
+                .name(beanName)
+                .listener(beanFactory.getBean(BeelineQueryListenerForJDBC.class))
+                .build();
+        }
+
+        return bean;
     }
 
 }
